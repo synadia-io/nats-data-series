@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  server:
+    desc: Run the nats server
+    cmds:
+      - nats server run --clean --jetstream rethink
+
+  clean:
+    desc: Clean up the project
+    cmds:
+        - rm -rf ~/.local/share/nats/rethink
