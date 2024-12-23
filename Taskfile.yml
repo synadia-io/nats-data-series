@@ -1,5 +1,10 @@
 version: '3'
 
+includes:
+  rethink:
+    dir: rethink
+    taskfile: rethink/Taskfile.yml
+
 tasks:
   server:
     desc: Run the nats server

@@ -1,0 +1,43 @@
+version: '3'
+tasks:
+  run:low_stock_detector:
+    desc: Run the low stock detector
+    cmds:
+      - target/low_stock_detector
+
+  run:stock_event_generator:
+    desc: Run the stock event generator
+    cmds:
+      - target/stock_event_generator
+
+  run:stock_updater:
+    desc: Run the stock updater
+    cmds:
+      - target/stock_updater
+
+  listen:low_stock:
+    desc: Listen for low stock events
+    cmds:
+      - nats --context=rethink sub "product.>"
+
+  setup:
+    desc: Create the jetStream stream and KV
+    cmds:
+      - task build
+      - nats --context=rethink stream add --subjects "warehouse.*.product.>" --defaults RETHINK_WAREHOUSE
+      - nats --context=rethink kv add RETHINK_STOCK
+
+  teardown:
+    desc: Remove the jetStream stream and KV
+    cmds:
+      - rm -rf target/*
+      - nats --context=rethink stream rm -f RETHINK_WAREHOUSE
+      - nats --context=rethink kv rm -f RETHINK_STOCK
+
+  build:
+    desc: Build the executables
+    cmds:
+      - go mod tidy
+      - go build -o target/low_stock_detector ./low_stock_detector
+      - go build -o target/stock_event_generator ./stock_event_generator
+      - go build -o target/stock_updater ./stock_updater

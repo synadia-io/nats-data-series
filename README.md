@@ -31,3 +31,23 @@ would love
 ### [Introduction](./introduction)
 The first post in the series sets the stage for the rest of the series. It is a brief recap of how we got
 to where we are today and why we need to rethink the way we build systems.
+
+### [Rethinking the system of record](./rethink)
+This post explores how to use NATS to build a system of record that can be used to store and retrieve data
+from a distributed system.
+
+
+#### Running the code
+1. Start the server if it hasn't been started yet
+2. Run `task rethink:setup` to build the code and create the JetStream stream and KV store
+3. Run `task rethink:listen:low_stock` to start listening for low stock events
+4. Run the next few commands in their own terminal windows
+    1. Run `task rethink:run:low_stock_detector` to start detecting low stock items
+    2. Run `task rethink:run:stock_updater` to start updating the stock levels on `stock.sold` and `stock.replenished` events
+    3. Run `task rethink:run:stock_event_generator` to start generating stock events
+
+#### Cleaning up
+1. Each of the tasks can be stopped by pressing `ctrl+c`. Just keep the server running for the time being
+2. Run `task rethink:teardown` to remove the JetStream stream and KV store
+3. Stop the server by pressing `ctrl+c`
+4. Run `task clean` to remove any lingering server files
