@@ -46,6 +46,47 @@ from a distributed system.
     2. Run `task rethink:run:stock_updater` to start updating the stock levels on `stock.sold` and `stock.replenished` events
     3. Run `task rethink:run:stock_event_generator` to start generating stock events
 
+#### What you should see
+The `stock_event_generator` will send change events and print out the updates it made:
+```
+Replenished 53 Pears (54 left)
+Replenished 14 Grapes (15 left)
+Sold 27 Pears (27 left)
+Sold 60 Oranges (8 left)
+...
+```
+
+The `stock_updater` will update the stock based on the `stock.sold` and `stock.replenished` events:
+```
+Received stock sold event: {"product_name":"Grapes","quantity":1}
+Received stock replenished event: {"product_name":"Grapes","quantity":63}
+Received stock replenished event: {"product_name":"Oranges","quantity":34}
+Received stock sold event: {"product_name":"Apples","quantity":4}
+Received stock sold event: {"product_name":"Pears","quantity":4}
+...
+```
+
+The `low_stock_detector` will look at the stock levels and send an event when the stock is low. **It will not 
+output anything but send a message `stock.low` message**
+
+The `listener` will listen for the `stock.low` events and print out the message it received:
+```
+[#182] Received on "product.Pears"
+myorg_type: stock.low
+myorg_format: application/json
+myorg_msg_id: mBZvheMnM10QcgS9ZPCguH
+
+{"product_name":"Pears"}
+
+
+[#183] Received on "product.Pears"
+myorg_format: application/json
+myorg_msg_id: A3WBvfAGUqwQCnZPeHBU8x
+myorg_type: stock.low
+
+{"product_name":"Pears"}
+```
+
 #### Cleaning up
 1. Each of the tasks can be stopped by pressing `ctrl+c`. Just keep the server running for the time being
 2. Run `task rethink:teardown` to remove the JetStream stream and KV store
