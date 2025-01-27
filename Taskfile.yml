@@ -4,6 +4,10 @@ includes:
   rethink:
     dir: rethink
     taskfile: rethink/Taskfile.yml
+    
+  secure:
+    dir: secure
+    taskfile: secure/Taskfile.yml
 
 tasks:
   server:
