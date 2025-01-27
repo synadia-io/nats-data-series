@@ -1,0 +1,31 @@
+version: '3'
+tasks:
+  run:receiver:
+    desc: Run the receiver
+    cmds:
+      - target/receiver
+
+  run:sender:
+    desc: Run the sender
+    requires:
+      vars:
+        - RECEIVER_PUB_KEY
+    cmds:
+      - target/sender
+
+  setup:
+    desc: Project Setup
+    cmds:
+      - task build
+
+  teardown:
+    desc: Project Teardown
+    cmds:
+      - rm -rf target/*
+
+  build:
+    desc: Build the executables
+    cmds:
+      - go mod tidy
+      - go build -o target/receiver ./receiver
+      - go build -o target/sender ./sender
